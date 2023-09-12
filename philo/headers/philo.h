@@ -19,6 +19,11 @@
 # include <sys/time.h>
 # include "./error_codes.h"
 
+typedef struct s_philo
+{
+    int philo_id;
+}           t_philo;
+
 typedef struct s_data
 {
 	size_t			phil_nb;

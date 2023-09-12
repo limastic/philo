@@ -18,7 +18,7 @@ void	*philosopher(void *arg)
 
 	data = (t_data *)arg;
 	pthread_mutex_lock(&(data->lock));
-	printf("je suis le thread %d\n", 1);
+	printf("je suis le thread %d\n", );
 	pthread_mutex_unlock(&(data->lock));
 	pthread_exit(NULL);
 }
