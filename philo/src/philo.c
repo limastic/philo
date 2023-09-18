@@ -12,70 +12,93 @@
 
 #include "../headers/philo.h"
 
-void	*philosopher(void *arg)
+void	*philosopher(t_philo *philo)
 {
-	t_data	*data;
-
-	data = (t_data *)arg;
-	pthread_mutex_lock(&(data->lock));
-	printf("je suis le thread %d\n", );
-	pthread_mutex_unlock(&(data->lock));
-	pthread_exit(NULL);
+	pthread_mutex_lock(&(philo->data->glob_lock));
+	pthread_mutex_unlock(&(philo->data->glob_lock));
+	while (philo->time_eat != philo->data->eat_limit)
+	{
+		printf("%li\n", philo->data->eat_limit);
+		think(philo->data, philo);
+		eat(philo->data, philo);
+		printf("id : %li mange :%li\n", philo->philo_id, philo->time_eat);
+	}
+	return (NULL);
 }
 
 int	wait_for_threads(t_data *data)
 {
 	size_t	i;
-	int		error_code;
 
 	i = 0;
 	while (i < data->phil_nb)
 	{
-		error_code = pthread_join(data->threads[i], NULL);
-		if (error_code)
-			return (printf("error while waiting for thread %li : %d", i + 1, error_code), 1);
+		if (pthread_join(data->philosophers[i].thread, NULL))
+			return (printf("error while waiting for thread %li, [%li]\n", i, data->philosophers[i].thread), 1);
 		i++;
 	}
 	return (0);
 }
 
-int	create_threads(t_data *data)
+int init_philosophers(t_philo *philosophers, t_data *data)
 {
 	size_t	i;
-	int		error_code;
 
+	philosophers = malloc(sizeof(t_philo) * data->phil_nb);
+	if (!philosophers)
+		return (1);
+	data->philosophers = philosophers;
+	pthread_mutex_init(&data->glob_lock, NULL);
 	i = 0;
+	pthread_mutex_lock(&data->glob_lock);
 	while (i < data->phil_nb)
 	{
-		error_code = pthread_create(&(data->threads[i]), NULL, philosopher, data);
-		if (error_code)
-			return (printf("error creating thread %li : %d", i + 1, error_code), 1);
+		philosophers[i].data = data;
+		philosophers[i].time_eat = 0;
+		philosophers[i].philo_id = i + 1;
+		philosophers[i].glob_lock = &data->glob_lock;
+		if (pthread_create(&(philosophers[i].thread), NULL, (void *)philosopher, &philosophers[i]))
+			return (printf("E_C_TH %li.", i + 1), 1);
 		i++;
 	}
+	data->t_0 = get_time();
+	pthread_mutex_unlock(&data->glob_lock);
 	return (0);
 }
 
-int	philo(t_data *data)
+int	get_params(int argc, char **argv, t_data *data)
 {
-	pthread_mutex_init(&(data->lock), NULL);
-	data->threads = malloc(sizeof(pthread_t) * data->phil_nb);
-	if (!data->threads)
+	pthread_mutex_init(&(data->fork_lock), NULL);
+	data->phil_nb = ft_atoi(argv[1]);
+	data->time_die = ft_atoi(argv[2]);
+	data->time_eat = ft_atoi(argv[3]);
+	data->time_sleep = ft_atoi(argv[4]);
+	if (argc < 5)
+		data->eat_limit = -1;
+	else
+		data->eat_limit = ft_atoi(argv[5]);
+	data->forks = malloc(sizeof(size_t) * data->phil_nb);
+	if (!data->forks)
 		return (1);
-	if (create_threads(data))
-		return (1);
-	if (wait_for_threads(data))
-		return (1);
+	memset(data->forks, 0, data->phil_nb);
 	return (0);
+}
+
+void	monitoring(t_data *data)
+{
+
 }
 
 int	main(int argc, char **argv)
 {
-	t_data	*data;
-
-	data = parsing(argc, argv);
-	if (!data)
+	t_data	data;
+	if (parsing(argc, argv))
 		return (1);
-	philo(data);
-	free(data);
+	if(get_params(argc, argv, &data))
+		return (1);
+	if(init_philosophers(data.philosophers, &data) || wait_for_threads(&data))
+		return (1);
+	pthread_mutex_destroy(&data.glob_lock);
+	free(data.philosophers);
 	return (0);
 }

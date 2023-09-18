@@ -12,7 +12,7 @@
 
 #include "../headers/philo.h"
 
-int	check_format(char **argv)
+static int	check_format(char **argv)
 {
 	size_t	i;
 	size_t	j;
@@ -31,32 +31,11 @@ int	check_format(char **argv)
 	return (0);
 }
 
-t_data	*get_params(int argc, char **argv)
+int	parsing(int argc, char **argv)
 {
-	t_data	*params;
-
-	params = malloc(sizeof(t_data));
-	if (!params)
-		return (NULL);
-	params->phil_nb = ft_atoi(argv[1]);
-	params->time_die = ft_atoi(argv[2]);
-	params->time_eat = ft_atoi(argv[3]);
-	params->time_sleep = ft_atoi(argv[4]);
-	if (argc < 5)
-		params->eat_limit = ft_atoi(argv[5]);
-	else
-		params->eat_limit = -1;
-	return (params);
-}
-
-t_data	*parsing(int argc, char **argv)
-{
-	t_data	*params;
-
 	if (argc < 5 || argc > 6)
-		return (printf(WRONG_ARG), NULL);
+		return (printf(WRONG_ARG), 1);
 	if (check_format(argv))
-		return (printf(WRONG_F), NULL);
-	params = get_params(argc, argv);
-	return (params);
+		return (printf(WRONG_F), 1);
+	return (0);
 }

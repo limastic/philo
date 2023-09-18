@@ -16,28 +16,45 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <pthread.h>
+# include <string.h>
 # include <sys/time.h>
+# include <stdbool.h>
+# include <unistd.h>
 # include "./error_codes.h"
 
 typedef struct s_philo
 {
-    int philo_id;
-}           t_philo;
+    size_t			philo_id;
+	size_t			time_eat;
+	pthread_mutex_t	*glob_lock;
+	pthread_t		thread;
+	struct s_data	*data;
+}	t_philo;
 
 typedef struct s_data
 {
+	pthread_mutex_t	glob_lock;
+	pthread_mutex_t fork_lock;
 	size_t			phil_nb;
 	size_t			time_die;
 	size_t			time_eat;
 	size_t			time_sleep;
 	size_t			eat_limit;
-	pthread_t		*threads;
-	pthread_mutex_t	lock;
-}			t_data;
+	size_t			t_0;
+	size_t			*forks;
+	t_philo 		*philosophers;
+	int 			shminiould_stop;
+}	t_data;
 
 int			ft_atoi(const char *str);
 int			is_zero(char *nb);
 int			ft_isdigit(int i);
-t_data		*parsing(int argc, char **argv);
+int			parsing(int argc, char **argv);
+size_t		get_time(void);
+void		think(t_data *data, t_philo *philo);
+void		eat(t_data *data, t_philo *philo);
+
+
+
 
 #endif

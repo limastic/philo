@@ -15,5 +15,6 @@
 
 # define WRONG_ARG "Error: Wrong number of args!\n"
 # define WRONG_F "Error: Wrong args format! Expected greater than 0 numbers\n"
+# define E_C_TH "Error: could not create thread "
 
 #endif

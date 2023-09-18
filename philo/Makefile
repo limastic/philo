@@ -16,13 +16,14 @@ REMOVE = rm -f
 
 NAME = philo
 
-HEADER = headers/philo.h \
-		headers/error_codes.h
+HEADER = philo.h \
+		error_codes.h
 
 SOURCES = src/philo.c \
 		src/atoi.c \
 		src/parsing.c \
-		src/utils.c
+		src/utils.c \
+		src/actions.c
 
 OBJ = $(SOURCES:.c=.o)
 
@@ -38,7 +39,7 @@ fclean:	clean
 	${REMOVE} ${NAME}
 
 %.o : %.c ${HEADER} Makefile
-	${CC} ${FLAGS}  -c $< -o $@ -I .
+	${CC} ${FLAGS}  -c $< -o $@ -I ./headers
 
 re:    fclean
 	${MAKE} all
