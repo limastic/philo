@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:52:26 by nfaust            #+#    #+#             */
-/*   Updated: 2023/09/07 14:52:48 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/11 16:03:49 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,13 @@ size_t	get_time(void)
 	m_seconds = u_seconds / 1000;
 	m_seconds += seconds * 1000;
 	return (m_seconds);
+}
+
+void	fill_forks(size_t *forks, size_t phil_nb)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < phil_nb)
+		forks[i++] = 0;
 }

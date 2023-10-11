@@ -6,18 +6,18 @@
 #    By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/07 14:30:42 by nfaust            #+#    #+#              #
-#    Updated: 2023/09/07 17:22:04 by nfaust           ###   ########.fr        #
+#    Updated: 2023/10/11 18:05:04 by nfaust           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
-FLAGS = -Wextra -Wall  -g3
+FLAGS = -Wextra -Wall -Werror -g3 #-fsanitize=address
 REMOVE = rm -f
 
 NAME = philo
 
-HEADER = philo.h \
-		error_codes.h
+HEADER = headers/philo.h \
+		headers/error_codes.h
 
 SOURCES = src/philo.c \
 		src/atoi.c \
@@ -27,21 +27,21 @@ SOURCES = src/philo.c \
 
 OBJ = $(SOURCES:.c=.o)
 
-all:	${NAME}
+all:	$(NAME)
 
-${NAME}:	${OBJ}
-	${CC} ${FLAGS} ${OBJ} -o ${NAME} -lpthread
+$(NAME):	$(OBJ)
+	$(CC) $(FLAGS) $(OBJ) -o $(NAME) -lpthread
 
 clean:
-	${REMOVE} ${OBJ}
+	$(REMOVE) $(OBJ)
 
 fclean:	clean
-	${REMOVE} ${NAME}
+	$(REMOVE) $(NAME)
 
-%.o : %.c ${HEADER} Makefile
-	${CC} ${FLAGS}  -c $< -o $@ -I ./headers
+%.o:%.c $(HEADER) Makefile
+	$(CC) $(FLAGS)  -c $< -o $@ -I .
 
 re:    fclean
-	${MAKE} all
+	$(MAKE) all
 
 .PHONY: re fclean all clean
