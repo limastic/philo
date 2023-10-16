@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:31:00 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/11 18:24:45 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/16 17:33:14 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,17 @@
 void	*philosopher(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->data->glob_lock));
+	printf("%li %li is thinking\n",
+		get_time() - philo->data->t_0, philo->philo_id);
 	pthread_mutex_unlock(&(philo->data->glob_lock));
 	if (philo->time_eat == 0)
 		if (philo->philo_id % 2 == 0)
 			usleep(philo->data->time_eat * 500);
 	while (philo->time_eat != philo->data->eat_limit)
 	{
-		think(philo->data, philo);
-		eat(philo->data, philo);
-		p_sleep(philo);
-//		printf("%li, %li/%li\n", philo->philo_id, philo->time_eat, philo->data->eat_limit);
+		if (think(philo->data, philo) || eat(philo->data, philo)
+			|| p_sleep(philo, philo->data))
+			break ;
 	}
 	return (NULL);
 }
@@ -60,7 +61,9 @@ int	init_philosophers(t_philo *philosophers, t_data *data)
 		philosophers[i].time_eat = 0;
 		philosophers[i].philo_id = i + 1;
 		philosophers[i].glob_lock = &data->glob_lock;
-		if (pthread_create(&(philosophers[i].thread), NULL, (void *)philosopher, &philosophers[i]))
+		philosophers[i].time_last_meal = get_time();
+		if (pthread_create(&(philosophers[i].thread), NULL,
+				(void *)philosopher, &philosophers[i]))
 			return (data->phil_nb = i, printf("E_C_TH %li.\n", i + 1), 1);
 		i++;
 	}
@@ -99,6 +102,7 @@ pthread_mutex_t	*init_forks_mutex(size_t phil_nb)
 int	get_params(int argc, char **argv, t_data *data)
 {
 	data->phil_nb = ft_atoi(argv[1]);
+	data->should_stop = 0;
 	data->time_die = ft_atoi(argv[2]);
 	data->time_eat = ft_atoi(argv[3]);
 	data->time_sleep = ft_atoi(argv[4]);
@@ -116,10 +120,36 @@ int	get_params(int argc, char **argv, t_data *data)
 	return (0);
 }
 
-//void	monitoring(t_data *data)
-//{
-//
-//}
+int no_one_died(t_data *data)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < data->phil_nb)
+	{
+		pthread_mutex_lock(&(data->glob_lock));
+//		printf("%li, %li\n", get_time() - data->philosophers[i].time_last_meal, data->time_die);
+		if (get_time() - data->philosophers[i].time_last_meal > data->time_die)
+		{
+			printf("%li %li died\n", get_time() - data->t_0,
+				data->philosophers[i].philo_id);
+			pthread_mutex_unlock(&(data->glob_lock));
+			return (0);
+		}
+		pthread_mutex_unlock(&(data->glob_lock));
+		i++;
+	}
+	return (1);
+}
+
+void	monitoring(t_data *data)
+{
+	while (no_one_died(data))
+		usleep(100);
+//	pthread_mutex_lock(&(data->glob_lock));
+//	data->should_stop = 1;
+//	pthread_mutex_unlock(&(data->glob_lock));
+}
 
 int	main(int argc, char **argv)
 {
@@ -128,10 +158,15 @@ int	main(int argc, char **argv)
 	if (parsing(argc, argv))
 		return (1);
 	if (get_params(argc, argv, &data))
-		return (2);
-	if (init_philosophers(data.philosophers, &data) || wait_for_threads(&data))
-		return (3);
+		return (1);
+	if (init_philosophers(data.philosophers, &data))
+		return (1);
+	monitoring(&data);
+	if (wait_for_threads(&data))
+		return (1);
 	pthread_mutex_destroy(&data.glob_lock);
+	destroy_forks_mutex(data.forks_mutex, data.phil_nb);
+	free(data.forks);
 	free(data.philosophers);
 	return (0);
 }

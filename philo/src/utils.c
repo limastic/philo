@@ -38,6 +38,15 @@ size_t	get_time(void)
 	return (m_seconds);
 }
 
+void	ft_usleep(size_t time)
+{
+	size_t	initial_time;
+
+	initial_time = get_time();
+	while (get_time() - initial_time < time)
+		usleep(100);
+}
+
 void	fill_forks(size_t *forks, size_t phil_nb)
 {
 	size_t	i;

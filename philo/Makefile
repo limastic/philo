@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 CC = cc
-FLAGS = -Wextra -Wall -Werror -g3 #-fsanitize=address
+FLAGS = -Wextra -Wall -Werror -g3 -fsanitize=thread
 REMOVE = rm -f
 
 NAME = philo
