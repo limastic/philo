@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:52:26 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/11 16:03:49 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/17 19:13:53 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,27 @@ void	fill_forks(size_t *forks, size_t phil_nb)
 	i = 0;
 	while (i < phil_nb)
 		forks[i++] = 0;
+}
+
+int	print_message(t_data *data, t_philo *philo, char *msg)
+{
+	pthread_mutex_lock(&(data->glob_lock));
+	if (philo->time_eat == data->eat_limit)
+	{
+		pthread_mutex_unlock(&(data->glob_lock));
+		return (1);
+	}
+	pthread_mutex_unlock(&(data->glob_lock));
+	if (!msg)
+		return (0);
+//	usleep(1);
+	pthread_mutex_lock(&(data->glob_lock));
+	if (data->should_stop)
+	{
+		pthread_mutex_unlock(&(data->glob_lock));
+		return (1);
+	}
+	printf("%li\t%li\t%s\n", get_time() - data->t_0, philo->philo_id, msg);
+	pthread_mutex_unlock(&(data->glob_lock));
+	return (0);
 }

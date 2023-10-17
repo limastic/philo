@@ -6,7 +6,7 @@
 #    By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/07 14:30:42 by nfaust            #+#    #+#              #
-#    Updated: 2023/10/11 18:05:04 by nfaust           ###   ########.fr        #
+#    Updated: 2023/10/17 20:29:56 by nfaust           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,11 @@ SOURCES = src/philo.c \
 		src/atoi.c \
 		src/parsing.c \
 		src/utils.c \
-		src/actions.c
+		src/actions.c \
+		src/fork_actions.c \
+		src/monitoring.c \
+		src/forks_mutex.c \
+		src/custom_printf.c
 
 OBJ = $(SOURCES:.c=.o)
 

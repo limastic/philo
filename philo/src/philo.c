@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:31:00 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/16 17:33:14 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/17 17:28:49 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,20 @@
 void	*philosopher(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->data->glob_lock));
-	printf("%li %li is thinking\n",
-		get_time() - philo->data->t_0, philo->philo_id);
+	philo->time_last_meal = philo->data->t_0;
 	pthread_mutex_unlock(&(philo->data->glob_lock));
+	if (print_message(philo->data, philo, "is thinking"))
+		return (NULL);
 	if (philo->time_eat == 0)
 		if (philo->philo_id % 2 == 0)
 			usleep(philo->data->time_eat * 500);
 	while (philo->time_eat != philo->data->eat_limit)
 	{
-		if (think(philo->data, philo) || eat(philo->data, philo)
-			|| p_sleep(philo, philo->data))
+		if (think(philo->data, philo) || philo->data->phil_nb == 1)
+			break ;
+		if (eat(philo->data, philo))
+			break ;
+		if (p_sleep(philo, philo->data))
 			break ;
 	}
 	return (NULL);
@@ -38,7 +42,8 @@ int	wait_for_threads(t_data *data)
 	while (i < data->phil_nb)
 	{
 		if (pthread_join(data->philosophers[i].thread, NULL))
-			return (printf("error while waiting for thread %li, [%li]\n", i, data->philosophers[i].thread), 1);
+			return (printf("error while waiting for thread %li, [%li]\n",
+					i, data->philosophers[i].thread), 1);
 		i++;
 	}
 	return (0);
@@ -72,33 +77,6 @@ int	init_philosophers(t_philo *philosophers, t_data *data)
 	return (0);
 }
 
-void	destroy_forks_mutex(pthread_mutex_t *forks_mutex, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < n)
-		pthread_mutex_destroy(&(forks_mutex[i++]));
-	free(forks_mutex);
-}
-
-pthread_mutex_t	*init_forks_mutex(size_t phil_nb)
-{
-	pthread_mutex_t	*forks_mutex;
-	size_t			i;
-
-	forks_mutex = malloc(sizeof(pthread_mutex_t) * phil_nb);
-	if (!forks_mutex)
-		return (NULL);
-	i = 0;
-	while (i < phil_nb)
-	{
-		if (pthread_mutex_init(&(forks_mutex[i++]), NULL))
-			return (destroy_forks_mutex(forks_mutex, i), NULL);
-	}
-	return (forks_mutex);
-}
-
 int	get_params(int argc, char **argv, t_data *data)
 {
 	data->phil_nb = ft_atoi(argv[1]);
@@ -118,37 +96,6 @@ int	get_params(int argc, char **argv, t_data *data)
 	if (!data->forks_mutex)
 		return (free(data->forks), 1);
 	return (0);
-}
-
-int no_one_died(t_data *data)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < data->phil_nb)
-	{
-		pthread_mutex_lock(&(data->glob_lock));
-//		printf("%li, %li\n", get_time() - data->philosophers[i].time_last_meal, data->time_die);
-		if (get_time() - data->philosophers[i].time_last_meal > data->time_die)
-		{
-			printf("%li %li died\n", get_time() - data->t_0,
-				data->philosophers[i].philo_id);
-			pthread_mutex_unlock(&(data->glob_lock));
-			return (0);
-		}
-		pthread_mutex_unlock(&(data->glob_lock));
-		i++;
-	}
-	return (1);
-}
-
-void	monitoring(t_data *data)
-{
-	while (no_one_died(data))
-		usleep(100);
-//	pthread_mutex_lock(&(data->glob_lock));
-//	data->should_stop = 1;
-//	pthread_mutex_unlock(&(data->glob_lock));
 }
 
 int	main(int argc, char **argv)

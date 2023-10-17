@@ -1,0 +1,3 @@
+./philo 99 500 200 100
+
+died => non fini parfois 
