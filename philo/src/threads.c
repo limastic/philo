@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 17:30:57 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/19 17:41:52 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/19 18:42:09 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ int	wait_for_threads(t_data *data)
 	i = 0;
 	while (i < data->phil_nb)
 	{
-		printf("je suis passe la \n");
 		if (pthread_join(data->philosophers[i].thread, NULL))
 		{
 			printf(E_W_TH, i);

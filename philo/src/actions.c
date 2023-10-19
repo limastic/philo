@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:03:00 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/19 18:43:40 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/19 18:56:42 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	think(t_data *data, t_philo *philo)
 	{
 		if (print_message(data, philo, "is thinking"))
 			return (1);
-		if (data->phil_nb % 2 != 0)
+		if (data->phil_nb % 2 != 0 && data->time_eat > data->time_sleep)
 			ft_usleep(data->time_eat - data->time_sleep + 1);
 	}
 	while (!are_forks_free(data, philo->philo_id))
