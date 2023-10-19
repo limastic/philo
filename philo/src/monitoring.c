@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:04:38 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/17 19:13:21 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/19 18:40:09 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,7 @@ void	monitoring(t_data *data)
 		}
 		usleep(10);
 	}
+	pthread_mutex_lock(&(data->glob_lock));
+	data->should_stop = 1;
+	pthread_mutex_unlock(&(data->glob_lock));
 }

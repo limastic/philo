@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:00 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/17 16:07:56 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/19 17:29:20 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,10 @@ pthread_mutex_t	*init_forks_mutex(size_t phil_nb)
 	while (i < phil_nb)
 	{
 		if (pthread_mutex_init(&(forks_mutex[i++]), NULL))
+		{
+			printf(E_C_MT, i - 1);
 			return (destroy_forks_mutex(forks_mutex, i), NULL);
+		}
 	}
 	return (forks_mutex);
 }

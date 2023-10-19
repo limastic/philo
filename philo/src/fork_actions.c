@@ -25,7 +25,7 @@ static void	take_forks_end_tab(t_data *data, size_t philo_id)
 	pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
 	while (philo_id == data->phil_nb)
 	{
-		usleep(10);
+		usleep(500);
 		if (print_message(data, data->philosophers, NULL))
 			return ;
 	}

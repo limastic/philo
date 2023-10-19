@@ -6,12 +6,12 @@
 #    By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/07 14:30:42 by nfaust            #+#    #+#              #
-#    Updated: 2023/10/17 20:29:56 by nfaust           ###   ########.fr        #
+#    Updated: 2023/10/19 17:42:59 by nfaust           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
-FLAGS = -Wextra -Wall -Werror -g3 -fsanitize=thread
+FLAGS = -Wextra -Wall -Werror -g3 #-fsanitize=thread
 REMOVE = rm -f
 
 NAME = philo
@@ -27,7 +27,7 @@ SOURCES = src/philo.c \
 		src/fork_actions.c \
 		src/monitoring.c \
 		src/forks_mutex.c \
-		src/custom_printf.c
+		src/threads.c
 
 OBJ = $(SOURCES:.c=.o)
 
@@ -48,4 +48,7 @@ fclean:	clean
 re:    fclean
 	$(MAKE) all
 
-.PHONY: re fclean all clean
+fsan_t: FLAGS += -fsanitize=thread
+fsan_t: $(NAME)
+
+.PHONY: re fclean all clean fsan_t
