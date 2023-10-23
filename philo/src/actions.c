@@ -18,7 +18,7 @@ int	think(t_data *data, t_philo *philo)
 	{
 		if (print_message(data, philo, "is thinking"))
 			return (1);
-		if (data->phil_nb % 2 != 0 && data->time_eat > data->time_sleep)
+		if (data->phil_nb % 2 != 0 && data->time_eat >= data->time_sleep)
 			ft_usleep(data->time_eat - data->time_sleep + 1);
 	}
 	while (!are_forks_free(data, philo->philo_id))

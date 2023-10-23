@@ -29,7 +29,6 @@ typedef struct s_philo
 	size_t			philo_id;
 	size_t			time_eat;
 	size_t			time_last_meal;
-	pthread_mutex_t	*glob_lock;
 	pthread_t		thread;
 	struct s_data	*data;
 }	t_philo;

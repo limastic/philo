@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:31:00 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/19 18:41:36 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/23 16:49:24 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	init_philosophers(t_philo *philosophers, t_data *data)
 		philosophers[i].data = data;
 		philosophers[i].time_eat = 0;
 		philosophers[i].philo_id = i + 1;
-		philosophers[i].glob_lock = &data->glob_lock;
 		philosophers[i].time_last_meal = get_time();
 		if (create_thread(&(philosophers[i].thread),
 				&(philosophers[i]), data, i))

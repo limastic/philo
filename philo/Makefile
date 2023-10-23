@@ -6,12 +6,12 @@
 #    By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/07 14:30:42 by nfaust            #+#    #+#              #
-#    Updated: 2023/10/19 17:42:59 by nfaust           ###   ########.fr        #
+#    Updated: 2023/10/23 19:06:34 by nfaust           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
-FLAGS = -Wextra -Wall -Werror -g3 #-fsanitize=thread
+FLAGS = -Wextra -Wall -Werror
 REMOVE = rm -f
 
 NAME = philo
@@ -48,7 +48,7 @@ fclean:	clean
 re:    fclean
 	$(MAKE) all
 
-fsan_t: FLAGS += -fsanitize=thread
+fsan_t: FLAGS += -fsanitize=thread -g3
 fsan_t: $(NAME)
 
 .PHONY: re fclean all clean fsan_t

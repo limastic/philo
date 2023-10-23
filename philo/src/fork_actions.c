@@ -6,102 +6,67 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 15:59:19 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/17 19:46:59 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/23 19:03:41 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/philo.h"
 
-static void	take_forks_end_tab(t_data *data, size_t philo_id)
+void	take_forks(t_data *data, size_t philo_id)
 {
-	data->forks[philo_id - 1] = philo_id;
+	size_t	left_fork;
+	size_t	right_fork;
+
+	left_fork = (philo_id - 1) % data->phil_nb;
+	right_fork = (philo_id) % data->phil_nb;
+	data->forks[left_fork] = philo_id;
+	pthread_mutex_unlock(&(data->forks_mutex[left_fork]));
 	if (print_message(data, data->philosophers + philo_id - 1,
 			"has taken a fork"))
 	{
-		pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
-		pthread_mutex_unlock(&(data->forks_mutex[data->phil_nb - 1]));
+		if (right_fork != left_fork)
+			pthread_mutex_unlock(&(data->forks_mutex[right_fork]));
 		return ;
 	}
-	pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
-	while (philo_id == data->phil_nb)
+	while (1 == data->phil_nb)
 	{
 		usleep(500);
 		if (print_message(data, data->philosophers, NULL))
 			return ;
 	}
-	data->forks[data->phil_nb - 1] = philo_id;
-	if (print_message(data, data->philosophers + philo_id - 1,
-			"has taken a fork"))
-	{
-		pthread_mutex_unlock(&(data->forks_mutex[data->phil_nb - 1]));
-		return ;
-	}
-	pthread_mutex_unlock(&(data->forks_mutex[data->phil_nb - 1]));
-	return ;
-}
-
-void	take_forks(t_data *data, size_t philo_id)
-{
-	if (philo_id == 1)
-		return (take_forks_end_tab(data, philo_id), (void)0);
-	data->forks[philo_id - 2] = philo_id;
-	if (print_message(data, data->philosophers + philo_id - 1,
-			"has taken a fork"))
-	{
-		pthread_mutex_unlock(&(data->forks_mutex[philo_id - 2]));
-		pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
-		return ;
-	}
-	pthread_mutex_unlock(&(data->forks_mutex[philo_id - 2]));
-	data->forks[philo_id - 1] = philo_id;
-	if (print_message(data, data->philosophers + philo_id - 1,
-			"has taken a fork"))
-	{
-		pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
-		return ;
-	}
-	pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
+	data->forks[right_fork] = philo_id;
+	pthread_mutex_unlock(&(data->forks_mutex[right_fork]));
+	print_message(data, data->philosophers + philo_id - 1,
+		"has taken a fork");
 }
 
 void	drop_forks(t_data *data, size_t philo_id)
 {
-	if (philo_id == 1)
-	{
-		pthread_mutex_lock(&(data->forks_mutex[philo_id - 1]));
-		data->forks[philo_id - 1] = 0;
-		pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
-		pthread_mutex_lock(&(data->forks_mutex[data->phil_nb - 1]));
-		data->forks[data->phil_nb - 1] = 0;
-		pthread_mutex_unlock(&(data->forks_mutex[data->phil_nb - 1]));
-		return ;
-	}
-	pthread_mutex_lock(&(data->forks_mutex[philo_id - 1]));
-	data->forks[philo_id - 1] = 0;
-	pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
-	pthread_mutex_lock(&(data->forks_mutex[philo_id - 2]));
-	data->forks[philo_id - 2] = 0;
-	pthread_mutex_unlock(&(data->forks_mutex[philo_id - 2]));
+	size_t	left_fork;
+	size_t	right_fork;
+
+	left_fork = (philo_id - 1) % data->phil_nb;
+	right_fork = (philo_id) % data->phil_nb;
+	pthread_mutex_lock(&(data->forks_mutex[left_fork]));
+	data->forks[left_fork] = 0;
+	pthread_mutex_unlock(&(data->forks_mutex[left_fork]));
+	pthread_mutex_lock(&(data->forks_mutex[right_fork]));
+	data->forks[right_fork] = 0;
+	pthread_mutex_unlock(&(data->forks_mutex[right_fork]));
 }
 
 int	are_forks_free(t_data *data, size_t philo_id)
 {
-	if (philo_id == 1)
-	{
-		pthread_mutex_lock(&(data->forks_mutex[data->phil_nb - 1]));
-		if (data->phil_nb != philo_id)
-			pthread_mutex_lock(&(data->forks_mutex[philo_id - 1]));
-		if (data->forks[philo_id - 1] || data->forks[data->phil_nb - 1])
-		{
-			pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1]));
-			pthread_mutex_unlock(&(data->forks_mutex[data->phil_nb - 1]));
-			return (0);
-		}
-		return (take_forks(data, philo_id), 1);
-	}
-	pthread_mutex_lock(&(data->forks_mutex[philo_id - 1]));
-	pthread_mutex_lock(&(data->forks_mutex[philo_id - 2]));
-	if (data->forks[philo_id - 1] || data->forks[philo_id - 2])
-		return (pthread_mutex_unlock(&(data->forks_mutex[philo_id - 2])),
-			pthread_mutex_unlock(&(data->forks_mutex[philo_id - 1])), 0);
+	size_t	left_fork;
+	size_t	right_fork;
+
+	left_fork = (philo_id - 1) % data->phil_nb;
+	right_fork = (philo_id) % data->phil_nb;
+	pthread_mutex_lock(&(data->forks_mutex[right_fork]));
+	if (left_fork != right_fork)
+		pthread_mutex_lock(&(data->forks_mutex[left_fork]));
+	if (data->forks[right_fork] || data->forks[left_fork])
+		return (pthread_mutex_unlock(&(data->forks_mutex[left_fork])),
+			pthread_mutex_unlock(&(data->forks_mutex[right_fork])), 0);
 	return (take_forks(data, philo_id), 1);
 }
