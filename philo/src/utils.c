@@ -58,7 +58,7 @@ void	fill_forks(size_t *forks, size_t phil_nb)
 		forks[i++] = 0;
 }
 
-int	print_message(t_data *data, t_philo *philo, char *msg)
+int	print_message(t_data *data, size_t philo_id, char *msg)
 {
 	pthread_mutex_lock(&(data->glob_lock));
 	if (data->should_stop)
@@ -68,7 +68,7 @@ int	print_message(t_data *data, t_philo *philo, char *msg)
 	}
 	if (!msg)
 		return (pthread_mutex_unlock(&(data->glob_lock)), 0);
-	printf("%li\t%li\t%s\n", get_time() - data->t_0, philo->philo_id, msg);
+	printf("%li\t%li\t%s\n", get_time() - data->t_0, philo_id, msg);
 	pthread_mutex_unlock(&(data->glob_lock));
 	return (0);
 }

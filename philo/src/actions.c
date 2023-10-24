@@ -16,7 +16,7 @@ int	think(t_data *data, t_philo *philo)
 {
 	if (philo->time_eat)
 	{
-		if (print_message(data, philo, "is thinking"))
+		if (print_message(data, philo->philo_id, "is thinking"))
 			return (1);
 		if (data->phil_nb % 2 != 0 && data->time_eat >= data->time_sleep)
 			ft_usleep(data->time_eat - data->time_sleep + 1);
@@ -24,7 +24,7 @@ int	think(t_data *data, t_philo *philo)
 	while (!are_forks_free(data, philo->philo_id))
 	{
 		usleep(10);
-		if (print_message(data, philo, NULL))
+		if (print_message(data, philo->philo_id, NULL))
 			return (1);
 	}
 	return (0);
@@ -32,7 +32,7 @@ int	think(t_data *data, t_philo *philo)
 
 int	p_sleep(t_philo *philo, t_data *data)
 {
-	if (print_message(data, philo, "is sleeping"))
+	if (print_message(data, philo->philo_id, "is sleeping"))
 		return (1);
 	ft_usleep(philo->data->time_sleep);
 	return (0);
@@ -40,7 +40,7 @@ int	p_sleep(t_philo *philo, t_data *data)
 
 int	eat(t_data *data, t_philo *philo)
 {
-	if (print_message(data, philo, "is eating"))
+	if (print_message(data, philo->philo_id, "is eating"))
 		return (1);
 	pthread_mutex_lock(&(data->glob_lock));
 	philo->time_last_meal = get_time();

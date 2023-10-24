@@ -6,7 +6,7 @@
 /*   By: nfaust <nfaust@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:33:09 by nfaust            #+#    #+#             */
-/*   Updated: 2023/10/19 17:42:01 by nfaust           ###   ########.fr       */
+/*   Updated: 2023/10/24 19:57:49 by nfaust           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int				ft_atoi(const char *str);
 void			ft_usleep(size_t time);
 int				is_zero(char *nb);
 int				ft_isdigit(int i);
-int				print_message(t_data *data, t_philo *philo, char *msg);
+int				print_message(t_data *data, size_t philo_id, char *msg);
 size_t			get_time(void);
 
 //===================== THREADS ======================//
@@ -64,7 +64,6 @@ int				create_thread(pthread_t *thread, t_philo *philo,
 //====================== FORKS =======================//
 int				are_forks_free(t_data *data, size_t philo_id);
 void			drop_forks(t_data *data, size_t philo_id);
-void			take_forks(t_data *data, size_t philo_id);
 void			fill_forks(size_t *forks, size_t phil_nb);
 
 //====================== UTILS =======================//

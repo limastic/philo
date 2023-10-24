@@ -19,7 +19,7 @@ void	*philosopher(t_philo *philo)
 		return (NULL);
 	philo->time_last_meal = philo->data->t_0;
 	pthread_mutex_unlock(&(philo->data->glob_lock));
-	if (print_message(philo->data, philo, "is thinking"))
+	if (print_message(philo->data, philo->philo_id, "is thinking"))
 		return (NULL);
 	if (philo->time_eat == 0)
 		if (philo->philo_id % 2 == 0)
