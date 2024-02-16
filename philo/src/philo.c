@@ -54,7 +54,7 @@ int	init_philosophers(t_philo *philosophers, t_data *data)
 		philosophers[i].time_last_meal = get_time();
 		if (create_thread(&(philosophers[i].thread),
 				&(philosophers[i]), data, i))
-			return (1);
+			return (pthread_mutex_unlock(&data->glob_lock), 1);
 		i++;
 	}
 	data->t_0 = get_time();

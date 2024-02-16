@@ -54,7 +54,8 @@ void	monitoring(t_data *data)
 	{
 		if (someone_died(data))
 		{
-			printf("%li\t%i\tdied\n", get_time() - data->t_0, data->should_stop);
+			printf("%li\t%i\tdied\n",
+				get_time() - data->t_0, data->should_stop);
 			break ;
 		}
 		usleep(10);
